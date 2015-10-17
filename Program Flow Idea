@@ -1,0 +1,31 @@
+Program Flow Idea
+
+----
+FIFO - make a que
+process certain clients
+completed task
+----
+
+}
+new client connects
+
+l
+
+create server
+
+listen for client
+
+if thread is avaliable then
+handle request
+
+else add request to the FIFO que
+
+
+return to waiting -listining
+{
+
+{
+FIFO que
+while spot[x]!=NULL
+	x++
+}
