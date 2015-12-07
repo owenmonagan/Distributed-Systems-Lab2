@@ -1,58 +1,63 @@
-import socketserver
+import SocketServer
 import threading
 import socket
-import queue
+import Queue
+from random import randint
 
-maxWorkerThreads= 1
+maxWorkerThreads= 2
+studentNumber=1112221
 
 
 
-class skelServer(socketserver.BaseRequestHandler):
-    """Request handler for my server"""
+class skelServer(SocketServer.BaseRequestHandler):
+    #"""Request handler for my server"""
     def handle(self):
         fifo.put(self)
-        print(fifo.qsize())
+        #print(fifo.qsize())
         item=fifo.get()
         cur_thread = threading.current_thread()
-        resString= self.request.recv(1024).strip().decode("ascii")
-        print(resString)
+        requestString= self.request.recv(1024)
+        returnString=requestString
+        #print(requestString)
 
 
-        if resString== "KILL_SERVICE":
-            server.shutdown()
-            server.server_close()
+        if requestString== "KILL_SERVICE\n":
+            exit(0)
 
-        elif resString=="HELO text":
-            resString = ("{} Display server info:".format(self.client_address[0]))
-
+        elif requestString=="HELO BASE_TEST\n":
+            returnString = ("HELO BASE_TEST\nIP:{}\nPort:{}\nStudentID:{}\n".format("134.226.32.10","3066",studentNumber))
 
 
-        print (self.client_address[0])
+
+        #print (self.client_address[0])
         # just send back the same data, but upper-cased
-        response = "{}: {}".format(cur_thread.name, resString.upper())
-        print (response)
-        self.request.sendall(response.encode("ascii"))
+        #response = "{}: {}".format(cur_thread.name, resString.upper())
+        #print (returnString)
+        self.request.sendall(returnString)
         fifo.task_done()
 
-class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     pass
+
 
 def client(ip, port, message):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((ip, port))
     try:
-        sock.sendall(message.encode("ascii"))
-        response = sock.recv(1024).decode("ascii")
-        print ("Received: {}".format(response))
+        sock.sendall(message)
+        response = sock.recv(1024)
+        print (response)
     finally:
         sock.close()
 
 
+
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 9999
+    #HOST, PORT = "localhost",5443
+    HOST, PORT = "0.0.0.0", 3066
 
     #initialising queue 
-    fifo=queue.Queue()
+    fifo=Queue.Queue()
     # Create the server, binding to localhost on port 9999
     server = ThreadedTCPServer((HOST, PORT), skelServer)
     ip, port = server.server_address
@@ -71,19 +76,23 @@ if __name__ == "__main__":
     fifo.join()
 
 
-    print ("Server loop running in thread:", server_thread.name)
-    i=0
-    while i<1000:
-        client(ip, port, "Hello World "+str(i))
-        i+=1
+    #print ("Server loop running in thread:", server_thread.name)
     
+    client(ip, port, "HELO text\n")
+    client(ip, port, "HELO text\n")
+    client(ip, port, "HELO text\n")
+    client(ip, port, "HELO text\n")
+    client(ip, port, "HELO text\n")
 
-    client(ip, port, "Hello World 1")
-    client(ip, port, "Hello World 2")
-    client(ip, port, "Hello World 3")
+    val=True
+    while(val==True):
+        val==True
+    #client(ip, port, "ANYTHING goes here\n")
+    #client(ip, port, "KILL_SERVICE\n")
 
-    server.shutdown()
-    server.server_close()
+    
+    #server.shutdown()
+    #server.server_close()
 
 
 
