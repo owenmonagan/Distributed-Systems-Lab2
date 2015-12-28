@@ -59,13 +59,10 @@ def get_lan_ip():
 
 class ThreadedTCPHandler(SocketServer.BaseRequestHandler):
 
-    # def setup(self):
-        # cur_thread = threading.currentThread()
-        # fifo.put(cur_thread)
 
 
     def handle(self):
-        # fifo._get()
+
         client_connected=True
         while(client_connected==True):
             requestString = self.request.recv(1024)
@@ -86,8 +83,7 @@ class ThreadedTCPHandler(SocketServer.BaseRequestHandler):
                 print(requestString)
 
 
-    #def finish(self):
-        #fifo.task_done()
+
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
@@ -97,14 +93,12 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     pass
 
 if __name__ == "__main__":
-    #SocketServer.TCPServer
     my_ip = get_lan_ip()
     h, p = my_ip, int(sys.argv[1])
     print(my_ip)
     print(p)
     server = ThreadedTCPServer((h,p), ThreadedTCPHandler)
 
-    # fifo = Queue.Queue(maxsize=10)
 
     try:
         server_thread = threading.Thread(target=server.serve_forever)
