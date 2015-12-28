@@ -1,6 +1,6 @@
 import SocketServer
 import threading
-
+import sys
 import os
 import socket
 
@@ -99,7 +99,7 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 if __name__ == "__main__":
     #SocketServer.TCPServer
     my_ip = get_lan_ip()
-    h, p = "0.0.0.0", 6234
+    h, p = my_ip, int(sys.argv[1])
     print(my_ip)
     print(p)
     server = ThreadedTCPServer((h,p), ThreadedTCPHandler)
